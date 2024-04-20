@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { grabArticle } from "./getPageArticle.js";
+import React from "react";
 
 function App() {
  const [message, setMessage] = useState("hello world");
