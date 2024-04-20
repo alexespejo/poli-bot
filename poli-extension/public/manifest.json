@@ -1,7 +1,7 @@
 {
  "manifest_version": 3,
  "version": "1.0.0",
- "name": "poli",
+ "name": "Poli-Bot",
  "action": {
   "default_popup": "index.html"
  },
