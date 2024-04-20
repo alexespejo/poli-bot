@@ -1,0 +1,22 @@
+{
+ "manifest_version": 3,
+ "version": "1.0.0",
+ "name": "poli",
+ "action": {
+  "default_popup": "index.html"
+ },
+ "side_panel": {
+  "default_path": "index.html"
+ },
+ "content_scripts": [
+  {
+   "js": ["content.js"],
+   "matches": ["<all_urls>"]
+  }
+ ],
+ "permissions": ["scripting", "sidePanel", "contextMenus"],
+ "host_permissions": ["http://*/*", "https://*/*"],
+ "background": {
+  "service_worker": "background.js"
+ }
+}
