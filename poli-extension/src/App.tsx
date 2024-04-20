@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { grabArticle } from "./getPageArticle.js";
 import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 
@@ -78,6 +78,11 @@ function App() {
   setIsTyping(false);
  };
 
+ useEffect(() => {
+  const chat = document.querySelector(".chat-island");
+  chat.scrollTop = chat.scrollHeight;
+ }, [messages]);
+
  return (
   <div className="h-screen  relative">
    <div className="navbar bg-base-100 shadow-lg navbar-island top-0">
@@ -102,7 +107,6 @@ function App() {
      </button>
     </div>
    </div>
-   {/* <section className="h-full container mx-autofixed inset-0"> */}
    <div className="chat-island flex flex-col overflow-auto p-4">
     {article}
     <button
