@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { grabArticle } from "./getPageArticle.js";
+import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 
 function App() {
  const [message, setMessage] = useState("hello world");
@@ -105,7 +106,7 @@ function App() {
              className="rounded-full mask mask-squircle border-2 "
              src={
               msg.role === "assistant"
-               ? "../src/assets/poli-the-dinosaur-headshot.png"
+               ? poliTheDinosaur
                : "https://t3.ftcdn.net/jpg/05/91/98/78/360_F_591987899_VaB4GHecB5lTITiqmvC0dhmrrNUsbPPt.jpg"
              }
             />
