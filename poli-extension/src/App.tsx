@@ -1,5 +1,5 @@
-import { grabArticle } from "./getPageArticle.js";
 import { useState } from "react";
+import { grabArticle } from "./getPageArticle.js";
 
 function App() {
  const [message, setMessage] = useState("hello world");
@@ -11,7 +11,7 @@ function App() {
     className="bg-slate-800 rounded-xl px-2 py-1 text-slate-300"
     onClick={async () => setMessage(await grabArticle())}
    >
-    Press Me
+    Load Article
    </button>
   </div>
  );
