@@ -5,7 +5,6 @@ import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 function App() {
  const [message, setMessage] = useState("hello world");
  const [input, setInput] = useState("");
- //  const [responses, setResponses] = useState([]);
  const [messages, setMessages] = useState([
   {
    content: "test1",
