@@ -171,9 +171,14 @@ function App() {
     className="form-control items-center  input-island "
     onSubmit={(e) => handleSubmit(e)}
    >
-    <div className="input-group max-w-full w-full relative px-5">
+    <div
+     className={`input-group max-w-full w-full relative px-5 ${
+      isTyping && "tooltip"
+     }`}
+     data-tip="Wait for PoliBot to respond..."
+    >
      <div className="flex items-center">
-      <div className="join w-full">
+      <div className="join w-full ">
        <input
         type="text"
         placeholder="Ask PoliBot..."
