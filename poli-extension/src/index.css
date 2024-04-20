@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.navbar-island {
+ height: 10%;
+}
+.chat-island {
+ height: 80%;
+}
+.input-island {
+ height: 10%;
+}
