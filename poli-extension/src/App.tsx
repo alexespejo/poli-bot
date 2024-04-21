@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { grabArticle } from "./getPageArticle.js";
 import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 
@@ -49,6 +49,9 @@ function App() {
      },
     ]);
    })
+   .then(() => {
+    setIsTyping(false);
+   })
    .catch((error) => {
     console.error("There was a problem with the fetch operation:", error);
    });
@@ -75,8 +78,12 @@ function App() {
 
   //   setMessages([...newMessages, completion.data.choices[0].message]);
   addResponse(newMessages);
-  setIsTyping(false);
  };
+
+ useEffect(() => {
+  const chat = document.querySelector(".chat-island");
+  chat.scrollTop = chat.scrollHeight;
+ }, [messages]);
 
  return (
   <div className="h-screen  relative">
@@ -102,7 +109,6 @@ function App() {
      </button>
     </div>
    </div>
-   {/* <section className="h-full container mx-autofixed inset-0"> */}
    <div className="chat-island flex flex-col overflow-auto p-4">
     {article}
     <button
@@ -146,26 +152,39 @@ function App() {
         </div>
        );
       })}
+     {isTyping && (
+      <div className="chat chat-start">
+       <div className="chat-image avatar">
+        <div className="w-10 rounded-full">
+         <img alt="Tailwind CSS chat bubble component" src={poliTheDinosaur} />
+        </div>
+       </div>
+       <div className="chat-header">PoliBot</div>
+       <div className="chat-bubble chat-bubble-info">
+        <span className="loading loading-dots loading-xs"></span>
+       </div>
+      </div>
+     )}
     </div>
    </div>
    <form
     className="form-control items-center  input-island "
     onSubmit={(e) => handleSubmit(e)}
    >
-    <div className="input-group max-w-full w-full relative px-5">
+    <div
+     className={`input-group max-w-full w-full relative px-5 ${
+      isTyping && "tooltip"
+     }`}
+     data-tip="Wait for PoliBot to respond..."
+    >
      <div className="flex items-center">
-      {isTyping && (
-       <small className="absolute -top-5 left-0.5 animate-pulse">
-        BOT is Typing...
-       </small>
-      )}
-
-      <div className="join w-full">
+      <div className="join w-full ">
        <input
         type="text"
         placeholder="Ask PoliBot..."
         className="input input-bordered flex-grow flex-end italic join-item"
         required
+        disabled={isTyping}
         onChange={(e) => setInput(e.target.value)}
        />
        <button className="btn btn-square join-item" type="submit">
