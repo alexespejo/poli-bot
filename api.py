@@ -83,5 +83,68 @@ def generate_articles(input: str) -> str:
     else:
         return "No closely related articles found."
 
+def fact_check(input: str) -> str:
+    """Fact-check a political statement using prompt chaining and database queries."""
+
+    # 1. Initial Answer Generation
+    prompt_initial = f"""
+    You are a political analyst tasked with providing an objective analysis of the following statement:
+
+    {input}
+
+    Please provide a neutral and informative response.
+    """
+    model = genai.GenerativeModel('gemini-1.5-pro-latest')
+    initial_response = model.generate_text(prompt_initial, max_output_tokens=100)
+
+    # 2. Assumption Identification 
+    prompt_assumptions = f"""
+    Based on your previous response to the statement:
+
+    {initial_response.text}
+
+    What are the key assumptions or premises that underlie your analysis? 
+    List them as concise points, one per line. 
+    """
+    assumptions_response = model.generate_text(prompt_assumptions, max_output_tokens=50)
+    assumptions = assumptions_response.text.strip().splitlines()
+
+    # 3. Assumption Verification with Database Queries and Prompt Chaining
+    verified_information = []
+    for assumption in assumptions:
+        # 3a. Query Database for Related Information
+        related_articles = generate_articles(assumption)  # Assuming you have this function
+
+        # 3b. Construct Prompt for Verification
+        prompt_verification = f"""
+        ## Assumption Verification
+
+        **Assumption:** {assumption}
+
+        **Related Information from Database:**
+        {related_articles} 
+
+        Based on the assumption and the provided information from the database, 
+        is the assumption accurate and supported by evidence? 
+        Provide a clear explanation of your reasoning, addressing any potential contradictions or inconsistencies.
+        """
+        verification_response = model.generate_text(prompt_verification, max_output_tokens=150)
+        verified_information.append(verification_response.text.strip())
+
+    prompt_final = f"""
+    ## Fact-Checking Analysis Results
+
+    **Initial Analysis:** {initial_response.text}
+
+    **Verified Information:**
+    {'\n'.join(verified_information)}
+
+    **Final Response:**
+
+    Based on the initial analysis and the verification of assumptions, provide a comprehensive and informative assessment of the statement's accuracy. Address any inconsistencies or uncertainties identified during the fact-checking process and present a balanced conclusion. 
+    """
+    final_response = model.generate_text(prompt_final, max_output_tokens=250)  # Adjust as needed
+    return final_response.text
+    
 
     
