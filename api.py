@@ -1,4 +1,12 @@
 import google.generativeai as genai
+from google.cloud import bigquery
+import time
+from ratelimit import limits, sleep_and_retry
+import re
+
+project_id = 'delta-era-420905'
+dataset_id = 'articles'
+table_id = 'articles_info'
 
 def summarize(input: str) -> str:
     """ Summarize a political statement. """
@@ -14,7 +22,7 @@ def summarize(input: str) -> str:
 
     ## Response:
     """
-
+    
     system_instructions = """
     You are a political analyst tasked with helping a reader understand the implications of a political statement.
     
@@ -33,3 +41,47 @@ def summarize(input: str) -> str:
     prompt = prompt_template.format(system_instructions=system_instructions, context=context)
     response = model.generate_content(prompt)
     return response.text
+
+# Assuming a rate limit of 1 request per second with a burst of 5 requests
+@sleep_and_retry
+@limits(calls=1, period=1)
+def generate_articles(input: str) -> str:
+    """Generate top 5 closely-related articles based on a political statement."""
+    
+    #print(f"Input for query: {input}")  # Print the input string
+    
+    # 1. Split input into words using regex
+    words = re.findall(r"\w+", input.lower())
+
+    # 2. Construct WHERE clause with OR conditions using LIKE
+    conditions = " OR ".join([f"TEXT LIKE '%{word}%'" for word in words])
+    
+    print("conditions: ", conditions)
+    query = f"""
+        SELECT url, title
+        FROM `{project_id}.{dataset_id}.{table_id}`
+        WHERE {conditions}
+        LIMIT 5
+    """
+
+    #print(f"Generated Query: {query}")  # Print the constructed query
+    
+    # 3. Execute Query and Fetch Results
+    client = bigquery.Client(project=project_id)
+    query_job = client.query(query)
+    results = query_job.result()
+    print(f"Number of results: {results.total_rows}")  # Print number of rows returned
+    # 4. Process and Return Results
+    if results.total_rows > 0:
+        print("running this.")
+        article_list = []
+        for row in results:
+            time.sleep(3)
+            article_info = f"- {row.title} ({row.url})"
+            article_list.append(article_info)
+        return article_list
+    else:
+        return "No closely related articles found."
+
+
+    

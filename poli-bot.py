@@ -1,7 +1,8 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from api import summarize
+from api import summarize, generate_articles
+import time
 
 # pip install --upgrade google-api-python-client
 # pip install python-dotenv
@@ -11,6 +12,8 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 POLI_BOT_PROMPT = """
     You are a political analyst tasked with helping a reader understand the implications of a political statement.
     If the user asks for a summary, use the provided 'summarize' function to generate a concise overview.
+    If the user wants to learn more about a particular political statement, use the 'generate_articles' function to provide relevant articles.
+    
     * Maintain neutrality and objectivity. 
     * Offer balanced perspectives and analysis.
     * Deliver a concise summary in under 200 characters.
@@ -24,7 +27,7 @@ POLI_BOT_PROMPT = """
 
 def poli_bot():
   model_name = 'gemini-1.5-pro-latest'
-  model = genai.GenerativeModel(model_name, tools=[summarize], system_instruction=POLI_BOT_PROMPT)
+  model = genai.GenerativeModel(model_name, tools=[summarize, generate_articles], system_instruction=POLI_BOT_PROMPT)
   convo = model.start_chat(enable_automatic_function_calling=True)
 
   print('Welcome to the Political Analysis Tool!\n')
@@ -36,7 +39,7 @@ def poli_bot():
 
     response = convo.send_message(user_input)
     print(f"\nPolitical Analyst: {response.text}\n")
-
+    
   print('\nThank you for using the Political Analysis Tool!')
 
 if __name__ == '__main__':
