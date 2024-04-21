@@ -137,7 +137,7 @@ def fact_check(input: str) -> str:
     **Initial Analysis:** {initial_response.text}
 
     **Verified Information:**
-    {'\n'.join(verified_information)}
+    {verified_information}
 
     **Final Response:**
 
