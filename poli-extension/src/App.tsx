@@ -32,7 +32,7 @@ function App() {
   };
 
   // Send the fetch request
-  fetch("http://127.0.0.1:5000/prompt_gemini", options)
+  fetch("http://127.0.0.1:5000/conversation", options)
    .then((response) => {
     if (response.ok) {
      return response.text(); // Assuming the server returns a text response
@@ -173,15 +173,7 @@ function App() {
      )}
     </div>
    </div>
-   <button
-    className="btn"
-    onClick={async () => {
-     setArticle(await grabArticle());
-     alert(article);
-    }}
-   >
-    Grab Article
-   </button>
+
    <form
     className="form-control items-center  input-island "
     onSubmit={(e) => handleSubmit(e)}
