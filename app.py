@@ -11,12 +11,12 @@ def index():
 
 @app.route('/prompt_gemini', methods=['POST'])
 def endpoint():
-    data = request.json # Get the JSON data from the request body
     try:
-        print(data["context"])
-        summary = poli_bot(data["context"]) # Call the poli_bot function with the context from the JSON data
+        data = request.json["context"] # Get the JSON data from the request body
+        print(data)
+        summary = poli_bot(data) # Call the poli_bot function with the context from the JSON data
         return summary # Return the text field from the JSON data
-    except:
-        print("No text in the data")
+    except (KeyError, TypeError) as e:
+        print(e, "error")
         return 'Error' 
 

@@ -32,7 +32,7 @@ function App() {
   };
 
   // Send the fetch request
-  fetch("http://127.0.0.1:5000/summarize_text", options)
+  fetch("http://127.0.0.1:5000/prompt_gemini", options)
    .then((response) => {
     if (response.ok) {
      return response.text(); // Assuming the server returns a text response
@@ -115,13 +115,14 @@ function App() {
     </div>
    </div>
    <div className="chat-island flex flex-col overflow-auto p-4">
-    {article}
+    {article.substring(0, 50)}
+    {/* 
     <button
      className="bg-slate-800 rounded-xl px-2 py-1 text-slate-300"
      onClick={async () => setArticle(await grabArticle())}
     >
      Load Article
-    </button>
+    </button> */}
     <div className="p-1 pb-8 flex-grow ">
      {messages.length &&
       messages.map((msg, i) => {
@@ -172,6 +173,15 @@ function App() {
      )}
     </div>
    </div>
+   <button
+    className="btn"
+    onClick={async () => {
+     setArticle(await grabArticle());
+     alert(article);
+    }}
+   >
+    Grab Article
+   </button>
    <form
     className="form-control items-center  input-island "
     onSubmit={(e) => handleSubmit(e)}
@@ -206,7 +216,6 @@ function App() {
      </div>
     </div>
    </form>
-   {/* </section> */}
   </div>
  );
 }
