@@ -1,11 +1,11 @@
 import os
 import google.generativeai as genai
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from api import summarize
 
 # pip install --upgrade google-api-python-client
 # pip install python-dotenv
-load_dotenv()
+# load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 POLI_BOT_PROMPT = """

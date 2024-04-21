@@ -1,3 +1,5 @@
 env/
 .env
 delta-era-420905-e5543a4f2e5a.json
+node_modules
+__pycache__
