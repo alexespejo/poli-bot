@@ -31,7 +31,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
  if (message.html) {
   console.log(message.html);
-  pageContent = message.html.substring(0, 500);
+  pageContent = message.html;
  }
  if (pageContent) {
   sendResponse(pageContent);

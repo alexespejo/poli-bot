@@ -2,6 +2,10 @@
  "manifest_version": 3,
  "version": "1.0.0",
  "name": "Poli-Bot",
+ "icons": {
+  "128": "images/icon-128.png",
+  "16": "images/icon-16.png"
+ },
  "action": {
   "default_popup": "index.html"
  },
