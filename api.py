@@ -3,6 +3,7 @@ from google.cloud import bigquery
 import time
 from ratelimit import limits, sleep_and_retry
 import re
+from google.api_core import retry
 
 project_id = 'delta-era-420905'
 dataset_id = 'articles'
@@ -34,13 +35,18 @@ def summarize(input: str) -> str:
     * Analyze the political development and its potential impacts.
     * Aim to empower informed decision-making without promoting any specific agenda.
     * Consider how this development affects the person asking the question and the broader political landscape.
+    * Consider the potential political biases that may exist in your response and tell the user what these biases are.
     """
-    
-    context = input
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
-    prompt = prompt_template.format(system_instructions=system_instructions, context=context)
-    response = model.generate_content(prompt)
-    return response.text
+    print('Summarizing')
+    try:
+        context = input
+        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        prompt = prompt_template.format(system_instructions=system_instructions, context=context)
+        time.sleep(10)
+        response = model.generate_content(prompt, request_options={'retry': retry.Retry()})
+        return response.text
+    except:
+        return 'Our servers are currently busy. Please try again later. :('
 
 # Assuming a rate limit of 1 request per second with a burst of 5 requests
 @sleep_and_retry
@@ -61,7 +67,7 @@ def generate_articles(input: str) -> str:
         SELECT url, title
         FROM `{project_id}.{dataset_id}.{table_id}`
         WHERE {conditions}
-        LIMIT 5
+        LIMIT 3
     """
 
     #print(f"Generated Query: {query}")  # Print the constructed query
@@ -71,47 +77,86 @@ def generate_articles(input: str) -> str:
     query_job = client.query(query)
     results = query_job.result()
     print(f"Number of results: {results.total_rows}")  # Print number of rows returned
+
+    # system_instructions = """
+    # You are a political analyst tasked with helping a reader understand the implications of a political statement.
+    
+    # You are going to get a query from the user first as well as a list of articles in the following format: 'Title (URL): content'. 
+    # You will analyze the contents of the articles and determine which articles are relevant to user's query.
+    # Then, you will output the relevant articles in the following format: 'Title (URL)'.
+
+    # * Maintain neutrality and objectivity. 
+    # * Offer balanced perspectives and analysis.
+    # * Use clear language, avoiding emotional bias.
+    # * Consider the potential political biases that may exist in your response and tell the user what these biases are.
+    # """
+
     # 4. Process and Return Results
     if results.total_rows > 0:
         print("running this.")
         article_list = []
         for row in results:
-            time.sleep(3)
+            print('me')
+            time.sleep(10)
             article_info = f"- {row.title} ({row.url})"
             article_list.append(article_info)
+        # Here we query the model
+        # context = input
+        # model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        # prompt = prompt_template.format(system_instructions=system_instructions, context=context)
+        # response = model.generate_content(prompt)
         return article_list
     else:
         return "No closely related articles found."
 
 def fact_check(input: str) -> str:
     """Fact-check a political statement using prompt chaining and database queries."""
-
+    
+    system_instructions = """
+    You are a political analyst tasked with helping a reader understand the implications of a political statement.
+    
+    * Maintain neutrality and objectivity. 
+    * Offer balanced perspectives and analysis.
+    * Deliver a concise summary in under 200 characters.
+    * Use clear language, avoiding emotional bias.
+    * Focus on clarity and relevance for easy comprehension.
+    * Analyze the political development and its potential impacts.
+    * Aim to empower informed decision-making without promoting any specific agenda.
+    * Consider how this development affects the person asking the question and the broader political landscape.
+    * Consider the potential political biases that may exist in your response and tell the user what these biases are.
+    """
     # 1. Initial Answer Generation
-    prompt_initial = f"""
-    You are a political analyst tasked with providing an objective analysis of the following statement:
+    initial_prompt = f"""
+    ## Instructions for Response:
+
+    {system_instructions}
+
+    ## Context:
 
     {input}
 
-    Please provide a neutral and informative response.
+    ## Response:
     """
-    model = genai.GenerativeModel('gemini-1.5-pro-latest')
-    initial_response = model.generate_text(prompt_initial, max_output_tokens=100)
-
+    try:
+        model = genai.GenerativeModel('gemini-1.5-pro-latest')
+        initial_response = model.generate_content(initial_prompt, request_options={'retry': retry.Retry()})
+    except:
+        return 'Our servers are currently busy. Please try again later. :('
     # 2. Assumption Identification 
     prompt_assumptions = f"""
     Based on your previous response to the statement:
 
-    {initial_response.text}
+    {initial_response}
 
     What are the key assumptions or premises that underlie your analysis? 
     List them as concise points, one per line. 
     """
-    assumptions_response = model.generate_text(prompt_assumptions, max_output_tokens=50)
-    assumptions = assumptions_response.text.strip().splitlines()
+    assumptions_response = model.generate_content(prompt_assumptions, request_options={'retry': retry.Retry()})
+    assumptions_list = assumptions_response.text.strip().splitlines()
 
     # 3. Assumption Verification with Database Queries and Prompt Chaining
     verified_information = []
-    for assumption in assumptions:
+    for assumption in assumptions_list:
         # 3a. Query Database for Related Information
         related_articles = generate_articles(assumption)  # Assuming you have this function
 
@@ -128,7 +173,7 @@ def fact_check(input: str) -> str:
         is the assumption accurate and supported by evidence? 
         Provide a clear explanation of your reasoning, addressing any potential contradictions or inconsistencies.
         """
-        verification_response = model.generate_text(prompt_verification, max_output_tokens=150)
+        verification_response = model.generate_content(prompt_verification, request_options={'retry': retry.Retry()})
         verified_information.append(verification_response.text.strip())
 
     prompt_final = f"""
@@ -137,13 +182,15 @@ def fact_check(input: str) -> str:
     **Initial Analysis:** {initial_response.text}
 
     **Verified Information:**
-    {'\n'.join(verified_information)}
+    {verified_information}
 
     **Final Response:**
 
     Based on the initial analysis and the verification of assumptions, provide a comprehensive and informative assessment of the statement's accuracy. Address any inconsistencies or uncertainties identified during the fact-checking process and present a balanced conclusion. 
     """
-    final_response = model.generate_text(prompt_final, max_output_tokens=250)  # Adjust as needed
+    time.sleep(10)
+
+    final_response = model.generate_content(prompt_final, request_options={'retry': retry.Retry()})  # Adjust as needed
     return final_response.text
     
 

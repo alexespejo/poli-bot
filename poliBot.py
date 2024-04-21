@@ -1,9 +1,12 @@
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
-from api import summarize, generate_articles
+from api import summarize, generate_articles, fact_check
 import time
+import urllib3
+from google.api_core import retry
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # pip install --upgrade google-api-python-client
 # pip install python-dotenv
 load_dotenv()
@@ -27,8 +30,9 @@ POLI_BOT_PROMPT = """
 
 def poli_bot():
   model_name = 'gemini-1.5-pro-latest'
-  model = genai.GenerativeModel(model_name, tools=[summarize, generate_articles], system_instruction=POLI_BOT_PROMPT)
+  model = genai.GenerativeModel(model_name, tools=[summarize, generate_articles, fact_check], system_instruction=POLI_BOT_PROMPT)
   convo = model.start_chat(enable_automatic_function_calling=True)
+  # convo = model.generate_content()
 
   print('Welcome to the Political Analysis Tool!\n')
 
@@ -36,9 +40,11 @@ def poli_bot():
     user_input = input('> You: ')
     if user_input.lower() == 'exit':
       break
-
-    response = convo.send_message(user_input)
-    print(f"\nPolitical Analyst: {response.text}\n")
+    try:
+      response = convo.send_message(user_input)
+      print(f"\nPolitical Analyst: {response.text}\n")
+    except:
+      print('Our servers are currently busy. Please try again later. :(')
     
   print('\nThank you for using the Political Analysis Tool!')
 
