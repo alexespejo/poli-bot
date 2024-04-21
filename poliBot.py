@@ -25,16 +25,15 @@ POLI_BOT_PROMPT = """
     * Analyze the political development and its potential impacts.
     * Aim to empower informed decision-making without promoting any specific agenda.
     * Consider how this development affects the person asking the question and the broader political landscape.
-    
 """
 
-def poli_bot():
+def poli_bot(user_input):
   model_name = 'gemini-1.5-pro-latest'
   model = genai.GenerativeModel(model_name, tools=[summarize, generate_articles, fact_check], system_instruction=POLI_BOT_PROMPT)
   convo = model.start_chat(enable_automatic_function_calling=True)
   # convo = model.generate_content()
 
-  print('Welcome to the Political Analysis Tool!\n')
+  # print('Welcome to the Political Analysis Tool!\n')
 
   while True:
     user_input = input('> You: ')
@@ -47,6 +46,7 @@ def poli_bot():
       print('Our servers are currently busy. Please try again later. :(')
     
   print('\nThank you for using the Political Analysis Tool!')
+  return response.text
 
 if __name__ == '__main__':
   poli_bot()
