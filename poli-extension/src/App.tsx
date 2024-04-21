@@ -3,6 +3,7 @@ import TypingAnimation from "./components/TypingAnimation.js";
 import { grabArticle } from "./getPageArticle.js";
 import meTheDinosaur from "../src/assets/meTheDinosaur.png";
 import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
+import { motion } from "framer-motion";
 
 function App() {
  const [article, setArticle] = useState("");
@@ -10,12 +11,8 @@ function App() {
 
  const [messages, setMessages] = useState([
   {
-   content: "test1",
+   content: "Hi! I'm Poli! How can I help you",
    role: "assistant",
-  },
-  {
-   content: "test2",
-   role: "user",
   },
  ]);
 
@@ -73,12 +70,6 @@ function App() {
   setIsTyping(true);
   e.target.reset();
 
-  // const completion = await openai.createChatCompletion({
-  //   model: "gpt-3.5-turbo",
-  //   messages: [...newMessages],
-  // });
-
-  //   setMessages([...newMessages, completion.data.choices[0].message]);
   addResponse(newMessages);
  };
 
@@ -167,7 +158,24 @@ function App() {
        </div>
       </div>
      )}
-     <div className="absolute bottom-0 ">hello world</div>
+     <div className="absolute bottom-0 flex flex-col space-y-1 py-1 ">
+      <motion.button
+       className="btn btn-outline btn-sm btn-ghost italic"
+       initial={{ opacity: 0 }}
+       animate={{ opacity: 1 }}
+       transition={{ duration: 0.5, delay: 0.5 }}
+      >
+       Summarize this Article
+      </motion.button>
+      <motion.button
+       className="btn btn-outline btn-sm btn-ghost italic"
+       initial={{ opacity: 0 }}
+       animate={{ opacity: 1 }}
+       transition={{ duration: 0.5, delay: 1 }}
+      >
+       Get Related Articles
+      </motion.button>
+     </div>
     </div>
    </div>
    <form

@@ -42,4 +42,4 @@ def poli_bot(user_input):
   return response.text
 
 if __name__ == '__main__':
-  poli_bot()
+  poli_bot('''Give me similar articles to this, Donald Trump has been inside a half-dozen courthouses over the past year, but he had a new experience walking into a downtown Manhattan courtroom Monday morning: a half-empty room.The former president slowly walked through the cavernous and dingy courtroom, past six empty rows of benches – set aside for prospective jurors – giving a quick glance to the six reporters sitting in the back row before sauntering to the front of the room and taking his seat at the defense table.''')

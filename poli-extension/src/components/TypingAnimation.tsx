@@ -32,9 +32,10 @@ const TypingAnimation = ({ text, delay }) => {
      style={{ display: "inline-block" }}
      initial={{ opacity: 0 }}
      animate={{ opacity: 1 }}
-     transition={{ delay: index * 0.01 }}
+     transition={{ delay: index * 0.05 }}
     >
      {char}
+     {char === " " ? <span className="opacity-0">.</span> : ""}
     </motion.span>
    ))}
   </motion.div>

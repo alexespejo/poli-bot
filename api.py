@@ -39,6 +39,7 @@ def summarize(input: str) -> str:
     context = input
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
     prompt = prompt_template.format(system_instructions=system_instructions, context=context)
+    time.sleep(3)  # Simulate processing time
     response = model.generate_content(prompt)
     return response.text
 
