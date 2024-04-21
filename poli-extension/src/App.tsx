@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import TypingAnimation from "./components/TypingAnimation.js";
 import { grabArticle } from "./getPageArticle.js";
+import meTheDinosaur from "../src/assets/meTheDinosaur.png";
 import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 
 function App() {
@@ -93,10 +95,15 @@ function App() {
  return (
   <div className="h-screen  relative">
    <div className="navbar bg-base-100 shadow-lg navbar-island top-0">
-    <div className="flex-1">
-     <a className="btn btn-ghost text-xl">PoliBot</a>
+    <div className="navbar-start">
+     <h1 className="btn btn-ghost text-3xl">PoliAI</h1>
     </div>
-    <div className="flex-none">
+    <div className="avatar navbar-center">
+     <div className="w-16 mask mask-squircle bg">
+      <img src={poliTheDinosaur} />
+     </div>
+    </div>
+    <div className="navbar-end">
      <button className="btn btn-square btn-ghost">
       <svg
        xmlns="http://www.w3.org/2000/svg"
@@ -114,15 +121,8 @@ function App() {
      </button>
     </div>
    </div>
-   <div className="chat-island flex flex-col overflow-auto p-4">
+   <div className="chat-island flex flex-col overflow-auto p-4 relative">
     {article.substring(0, 50)}
-    {/* 
-    <button
-     className="bg-slate-800 rounded-xl px-2 py-1 text-slate-300"
-     onClick={async () => setArticle(await grabArticle())}
-    >
-     Load Article
-    </button> */}
     <div className="p-1 pb-8 flex-grow ">
      {messages.length &&
       messages.map((msg, i) => {
@@ -137,23 +137,19 @@ function App() {
           <div className="w-10 rounded-full">
            <img
             className="rounded-full mask mask-squircle border-2 "
-            src={
-             msg.role === "assistant"
-              ? poliTheDinosaur
-              : "https://t3.ftcdn.net/jpg/05/91/98/78/360_F_591987899_VaB4GHecB5lTITiqmvC0dhmrrNUsbPPt.jpg"
-            }
+            src={msg.role === "assistant" ? poliTheDinosaur : meTheDinosaur}
            />
           </div>
          </div>
          <div className="chat-header">
-          {msg.role === "assistant" ? "PoliBot" : "You"}
+          {msg.role === "assistant" ? "PoliAI" : "You"}
          </div>
          <div
           className={`chat-bubble ${
            msg.role === "assistant" ? "chat-bubble-info" : "bg-slate-700"
           }`}
          >
-          {msg.content}
+          <TypingAnimation text={msg.content} delay={1} />
          </div>
         </div>
        );
@@ -171,9 +167,9 @@ function App() {
        </div>
       </div>
      )}
+     <div className="absolute bottom-0 ">hello world</div>
     </div>
    </div>
-
    <form
     className="form-control items-center  input-island "
     onSubmit={(e) => handleSubmit(e)}
