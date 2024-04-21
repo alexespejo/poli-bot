@@ -3,9 +3,9 @@ import { grabArticle } from "./getPageArticle.js";
 import poliTheDinosaur from "../src/assets/poli-the-dinosaur-headshot.png";
 
 function App() {
- const [article, setArticle] = useState("hello world");
-
+ const [article, setArticle] = useState("");
  const [input, setInput] = useState("");
+
  const [messages, setMessages] = useState([
   {
    content: "test1",
@@ -19,7 +19,7 @@ function App() {
 
  function addResponse(previousMessages: any) {
   const requestData = {
-   context: input,
+   context: input + " " + article,
   };
 
   // Options for the fetch request
@@ -81,8 +81,13 @@ function App() {
  };
 
  useEffect(() => {
-  const chat = document.querySelector(".chat-island");
-  chat.scrollTop = chat.scrollHeight;
+  const fetchData = async () => {
+   const chat = document.querySelector(".chat-island");
+   chat.scrollTop = chat.scrollHeight;
+
+   setArticle(await grabArticle());
+  };
+  fetchData();
  }, [messages]);
 
  return (
