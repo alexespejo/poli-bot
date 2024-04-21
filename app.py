@@ -14,7 +14,7 @@ def endpoint():
     data = request.json # Get the JSON data from the request body
     try:
         print(data["context"])
-        summary = data["context"]
+        summary = poli_bot(data["context"]) # Call the poli_bot function with the context from the JSON data
         return summary # Return the text field from the JSON data
     except:
         print("No text in the data")
