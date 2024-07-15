@@ -1,6 +1,6 @@
 # PoliAI
 
-Preivew demo [here](https://devpost.com/software/poliai)
+[Devpost](https://devpost.com/software/poliai)
 
 ## Inspiration
 
