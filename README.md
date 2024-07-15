@@ -1,5 +1,7 @@
 # PoliAI
 
+Preivew demo [here](https://devpost.com/software/poliai)
+
 ## Inspiration
 
 The inspiration behind this project was the growing concern over election misinformation, fueled by clickbait media and AI-generated content, which can spread false narratives and undermine the integrity of the electoral process, especially with the upcoming 2024 presidential election.
