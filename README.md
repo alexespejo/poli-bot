@@ -1,4 +1,4 @@
-**\* About the project**
+# PoliAI
 
 ## Inspiration
 
